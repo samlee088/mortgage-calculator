@@ -25,11 +25,11 @@ import {
 } from "@/components/ui/card";
 
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import { useState } from "react";
 
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
+  purchasePrice: z.number().positive({ message: "this👏is👏too👏big" }),
 });
 
 function Calculator() {
@@ -37,7 +37,7 @@ function Calculator() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      purchasePrice: 1,
     },
   });
 
@@ -46,6 +46,14 @@ function Calculator() {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
+  }
+
+  const [purchasePriceDisplay, setPurchasePriceDisplay] = useState(1);
+
+  // Slider change function
+  function slideChange(value: number[]) {
+    console.log(value[0]);
+    setPurchasePriceDisplay(value[0]);
   }
 
   return (
@@ -66,15 +74,28 @@ function Calculator() {
             >
               <FormField
                 control={form.control}
-                name="username"
+                name="purchasePrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>
+                      Purchase Price : {purchasePriceDisplay}
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="shadcn" {...field} />
+                      {/* <Input placeholder="shadcn" {...field} />
+                       */}
+                      <div className="flex items-center">
+                        <Slider
+                          onValueChange={slideChange}
+                          max={100000}
+                          min={100}
+                          step={100}
+                          className="w-64"
+                        />
+                        <div className="w-10 text-center"></div>
+                      </div>
                     </FormControl>
                     <FormDescription>
-                      This is your public display name.
+                      The total amount of the loan
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
