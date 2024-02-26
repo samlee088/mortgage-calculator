@@ -48,12 +48,12 @@ function Calculator() {
     console.log(values);
   }
 
-  const [purchasePriceDisplay, setPurchasePriceDisplay] = useState(1);
+  const [purchasePriceDisplay, setPurchasePriceDisplay] = useState("10,000");
 
   // Slider change function
   function slideChange(value: number[]) {
     console.log(value[0]);
-    setPurchasePriceDisplay(value[0]);
+    setPurchasePriceDisplay(value[0].toLocaleString());
   }
 
   return (
@@ -78,7 +78,7 @@ function Calculator() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Purchase Price : {purchasePriceDisplay}
+                      Purchase Price : ${purchasePriceDisplay}
                     </FormLabel>
                     <FormControl>
                       {/* <Input placeholder="shadcn" {...field} />
@@ -86,9 +86,9 @@ function Calculator() {
                       <div className="flex items-center">
                         <Slider
                           onValueChange={slideChange}
-                          max={100000}
-                          min={100}
-                          step={100}
+                          max={1000000}
+                          min={10000}
+                          step={10000}
                           className="w-64"
                         />
                         <div className="w-10 text-center"></div>
