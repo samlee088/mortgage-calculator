@@ -27,7 +27,8 @@ import {
 } from "@/components/ui/card";
 
 const formSchema = z.object({
-  purchasePrice: z.number().positive({ message: "this👏is👏too👏big" }),
+  purchasePrice: z.number().positive(),
+  downPayment: z.number().positive(),
 });
 
 function Calculator() {
@@ -36,6 +37,7 @@ function Calculator() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       purchasePrice: 1,
+      downPayment: 1,
     },
   });
 
@@ -45,12 +47,22 @@ function Calculator() {
     // ✅ This will be type-safe and validated.
     form.setValue("purchasePrice", values.purchasePrice);
     console.log(values);
+
+    /* Formula for mortgage payments: M = P[r(1+r)^n/((1+r)^n)-1)]
+    M = the total monthly mortgage payment
+    P = the principal loan amount(Purchase Price - Down Payment)
+    r = your monthly interest rate
+    n = number of payments over the loan’s lifetime. */
   }
 
   // Slider change function
-  function slideChange(value: number[]) {
+  function slideChange(value: number[], name: "purchasePrice" | "downPayment") {
     console.log(value[0]);
-    form.setValue("purchasePrice", value[0]);
+    // form.setValue(
+    //   name == "purchasePrice" ? "purchasePrice" : "downPayment",
+    //   value[0]
+    // );
+    form.setValue(name, value[0]);
   }
 
   return (
@@ -74,6 +86,23 @@ function Calculator() {
                 name="purchasePrice"
                 render={() => (
                   <SlideDisplay
+                    name="purchasePrice"
+                    slideChange={slideChange}
+                    max={1000000}
+                    min={10000}
+                    step={10000}
+                    className="w-64"
+                    formDescription="The total amount of the loan"
+                    formLabel="Purchase Price : $"
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="downPayment"
+                render={() => (
+                  <SlideDisplay
+                    name="downPayment"
                     slideChange={slideChange}
                     max={1000000}
                     min={10000}

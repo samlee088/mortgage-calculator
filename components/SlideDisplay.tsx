@@ -13,6 +13,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+type T = "purchasePrice" | "downPayment";
+
 type SliderDisplayProps = {
   max: number;
   min: number;
@@ -20,7 +22,8 @@ type SliderDisplayProps = {
   className: string;
   formDescription: string;
   formLabel: string;
-  slideChange: (value: number[]) => void;
+  name: T;
+  slideChange: (value: number[], name: T) => void;
 };
 
 function SlideDisplay({
@@ -30,14 +33,16 @@ function SlideDisplay({
   className,
   formDescription,
   formLabel,
+  name,
   slideChange,
 }: SliderDisplayProps) {
   const [purchasePriceDisplay, setPurchasePriceDisplay] = useState("10,000");
 
-  function updateSliderHeader(value: number[]) {
+  function updateSliderHeader(value: number[], name: "purchasePrice" | "downPayment") {
     console.log(value[0]);
     setPurchasePriceDisplay(value[0].toLocaleString());
-    slideChange(value);
+    console.log(name);
+    slideChange(value, name);
   }
 
   return (
@@ -49,7 +54,7 @@ function SlideDisplay({
       <FormControl>
         <div className="flex items-center">
           <Slider
-            onValueChange={(value) => updateSliderHeader(value)}
+            onValueChange={(value) => updateSliderHeader(value, name)}
             max={max}
             min={min}
             step={step}
