@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import SlideDisplay from "./SlideDisplay";
+
 import {
   Form,
   FormControl,
@@ -24,10 +26,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
-import { useState } from "react";
-
 const formSchema = z.object({
   purchasePrice: z.number().positive({ message: "this👏is👏too👏big" }),
 });
@@ -45,15 +43,14 @@ function Calculator() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    form.setValue("purchasePrice", values.purchasePrice);
     console.log(values);
   }
-
-  const [purchasePriceDisplay, setPurchasePriceDisplay] = useState("10,000");
 
   // Slider change function
   function slideChange(value: number[]) {
     console.log(value[0]);
-    setPurchasePriceDisplay(value[0].toLocaleString());
+    form.setValue("purchasePrice", value[0]);
   }
 
   return (
@@ -75,32 +72,19 @@ function Calculator() {
               <FormField
                 control={form.control}
                 name="purchasePrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Purchase Price : ${purchasePriceDisplay}
-                    </FormLabel>
-                    <FormControl>
-                      {/* <Input placeholder="shadcn" {...field} />
-                       */}
-                      <div className="flex items-center">
-                        <Slider
-                          onValueChange={slideChange}
-                          max={1000000}
-                          min={10000}
-                          step={10000}
-                          className="w-64"
-                        />
-                        <div className="w-10 text-center"></div>
-                      </div>
-                    </FormControl>
-                    <FormDescription>
-                      The total amount of the loan
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
+                render={() => (
+                  <SlideDisplay
+                    slideChange={slideChange}
+                    max={1000000}
+                    min={10000}
+                    step={10000}
+                    className="w-64"
+                    formDescription="The total amount of the loan"
+                    formLabel="Purchase Price : $"
+                  />
                 )}
               />
+
               <Button type="submit">Submit</Button>
             </form>
           </Form>
