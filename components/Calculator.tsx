@@ -29,6 +29,7 @@ import {
 const formSchema = z.object({
   purchasePrice: z.number().positive(),
   downPayment: z.number().positive(),
+  repaymentTime: z.number().positive(),
 });
 
 function Calculator() {
@@ -38,6 +39,7 @@ function Calculator() {
     defaultValues: {
       purchasePrice: 1,
       downPayment: 1,
+      repaymentTime: 1,
     },
   });
 
@@ -56,12 +58,11 @@ function Calculator() {
   }
 
   // Slider change function
-  function slideChange(value: number[], name: "purchasePrice" | "downPayment") {
+  function slideChange(
+    value: number[],
+    name: "purchasePrice" | "downPayment" | "repaymentTime"
+  ) {
     console.log(value[0]);
-    // form.setValue(
-    //   name == "purchasePrice" ? "purchasePrice" : "downPayment",
-    //   value[0]
-    // );
     form.setValue(name, value[0]);
   }
 
@@ -108,8 +109,24 @@ function Calculator() {
                     min={10000}
                     step={10000}
                     className="w-64"
-                    formDescription="The total amount of the loan"
-                    formLabel="Purchase Price : $"
+                    formDescription="The Down Payment Amount"
+                    formLabel="Down Payment : $"
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="repaymentTime"
+                render={() => (
+                  <SlideDisplay
+                    name="repaymentTime"
+                    slideChange={slideChange}
+                    max={40}
+                    min={10}
+                    step={5}
+                    className="w-64"
+                    formDescription="The total length of repayment years"
+                    formLabel="Repayment Years: "
                   />
                 )}
               />
