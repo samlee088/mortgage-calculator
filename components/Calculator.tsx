@@ -30,6 +30,7 @@ const formSchema = z.object({
   purchasePrice: z.number().positive(),
   downPayment: z.number().positive(),
   repaymentTime: z.number().positive(),
+  interestRate: z.number().positive(),
 });
 
 function Calculator() {
@@ -37,9 +38,10 @@ function Calculator() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      purchasePrice: 1,
-      downPayment: 1,
-      repaymentTime: 1,
+      purchasePrice: 10000,
+      downPayment: 10000,
+      repaymentTime: 10,
+      interestRate: 0.5,
     },
   });
 
@@ -60,7 +62,7 @@ function Calculator() {
   // Slider change function
   function slideChange(
     value: number[],
-    name: "purchasePrice" | "downPayment" | "repaymentTime"
+    name: "purchasePrice" | "downPayment" | "repaymentTime" | "interestRate"
   ) {
     console.log(value[0]);
     form.setValue(name, value[0]);
@@ -124,6 +126,22 @@ function Calculator() {
                     max={40}
                     min={10}
                     step={5}
+                    className="w-64"
+                    formDescription="The total length of repayment years"
+                    formLabel="Repayment Years: "
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="interestRate"
+                render={() => (
+                  <SlideDisplay
+                    name="interestRate"
+                    slideChange={slideChange}
+                    max={10}
+                    min={0.5}
+                    step={0.5}
                     className="w-64"
                     formDescription="The total length of repayment years"
                     formLabel="Repayment Years: "
