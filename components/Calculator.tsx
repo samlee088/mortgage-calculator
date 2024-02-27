@@ -25,6 +25,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import CalculationDisplay from "./CalculationDisplay";
+import { useState } from "react";
+import exp from "constants";
 
 const formSchema = z.object({
   purchasePrice: z.number().positive(),
@@ -45,6 +48,9 @@ function Calculator() {
     },
   });
 
+  const [loanAmount, setLoanAmount] = useState("--");
+  const [loanMonthlyPayment, setLoanMonthlyPayment] = useState("--");
+
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
@@ -52,6 +58,19 @@ function Calculator() {
     form.setValue("purchasePrice", values.purchasePrice);
     console.log(values);
 
+    let loanAmount = values.purchasePrice - values.downPayment;
+    if (loanAmount < 0) {
+      setLoanAmount("Loan amount must be greater than Down Payment");
+    } else {
+      setLoanAmount(`$${loanAmount.toLocaleString()}`);
+    }
+
+    let r = values.interestRate / 100;
+    let numerator = r * (1 + r) ** (values.repaymentTime * 12);
+    let denominator = (1 + r) ** (values.repaymentTime * 12) - 1;
+    let calculator = loanAmount * (numerator / denominator);
+    calculator = parseFloat(calculator.toFixed(2));
+    setLoanMonthlyPayment(`$${calculator.toLocaleString()}`);
     /* Formula for mortgage payments: M = P[r(1+r)^n/((1+r)^n)-1)]
     M = the total monthly mortgage payment
     P = the principal loan amount(Purchase Price - Down Payment)
@@ -70,15 +89,14 @@ function Calculator() {
 
   return (
     <div className="flex flex-col items-center justify-center bg-transparent  min-w-96">
-      Calculator
       <Card className="flex flex-col items-center justify-center">
-        <CardHeader className="flex flex-col items-center justify-center mb-20">
+        <CardHeader className="flex flex-col items-center justify-center mb-5">
           <CardTitle>Mortgage Calculator</CardTitle>
           <CardDescription>
             Online Calculator for mortgage payments
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col items-center justify-center mb-20 no-padding">
+        <CardContent className="flex flex-col  items-center justify-center mb-20 no-padding">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -143,13 +161,17 @@ function Calculator() {
                     min={0.5}
                     step={0.5}
                     className="w-64"
-                    formDescription="The total length of repayment years"
-                    formLabel="Repayment Years: "
+                    formDescription="Mortgage Interest Rate"
+                    formLabel="Interest Rate: "
                   />
                 )}
               />
-
               <Button type="submit">Submit</Button>
+              <CalculationDisplay data={loanAmount} header="Loan Amount" />
+              <CalculationDisplay
+                data={loanMonthlyPayment}
+                header="Estimated Monthly Payment"
+              />
             </form>
           </Form>
         </CardContent>
