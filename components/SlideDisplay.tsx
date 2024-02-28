@@ -4,10 +4,8 @@ import React, { useState } from "react";
 import { Slider } from "@/components/ui/slider";
 
 import {
-  Form,
   FormControl,
   FormDescription,
-  FormField,
   FormItem,
   FormLabel,
   FormMessage,
@@ -48,9 +46,8 @@ function SlideDisplay({
     value: number[],
     name: "purchasePrice" | "downPayment" | "repaymentTime" | "interestRate"
   ) {
-    console.log(value[0]);
     setsliderDisplay(value[0].toLocaleString());
-    console.log(name);
+
     slideChange(value, name);
   }
 
